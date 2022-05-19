@@ -2,7 +2,6 @@
 using namespace std;
 int main() {
 	int a[8];
-	char b;
 	int asC = 0;
 	int desC = 0;
 	for (int i = 0; i < 8; i++) {
