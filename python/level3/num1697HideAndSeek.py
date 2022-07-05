@@ -4,7 +4,7 @@ N,K=map(int,stdin.readline().split())
 
 visited=[0]*100001
 
-def bfs(v):
+def bfs(v): 
     q=deque([v])
     visited[v]=1
     while q:
