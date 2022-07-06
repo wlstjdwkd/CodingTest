@@ -15,5 +15,6 @@ def bfs(v):
             if 0 <= i <= 100000 and not visited[i]:
                 visited[i] = visited[v] +1
                 q.append(i)
+                
 
 print(bfs(N))
