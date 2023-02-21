@@ -24,12 +24,12 @@ public class Main {
             ladder[a][b] = 1;
         }
         for(int i=0;i<=3; i++){
-            dfs(1,0,i);
+            dfs(0,i);
         }
         System.out.println(-1);
 
     }
-    private static void dfs(int nr, int cnt, int size){
+    private static void dfs(int cnt, int size){
         if(cnt == size){
             if(check()){
                 System.out.println(size);
@@ -46,7 +46,7 @@ public class Main {
                     continue;
                 }
                 ladder[r][c]=1;
-                dfs(r,cnt+1,size);
+                dfs(cnt+1,size);
                 ladder[r][c]=0;
             }
         }
