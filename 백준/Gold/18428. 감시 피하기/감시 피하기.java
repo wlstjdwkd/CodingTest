@@ -32,11 +32,11 @@ public class Main {
                 }
             }
         }
-        dfs(0);
+        dfs(0,0,0);
         System.out.println("NO");
     }
 
-    private static void dfs(int cnt){
+    private static void dfs(int x, int y, int cnt){
         if(cnt==3){
             if(check()){
                 System.out.println("YES");
@@ -44,14 +44,15 @@ public class Main {
             }
             return;
         }
-        for(int i=0; i<N; i++){
-            for(int j=0; j<N; j++){
+        for(int i=x; i<N; i++){
+            for(int j=y; j<N; j++){
                 if(arr[i][j]=='X'){
                     arr[i][j]='O';
-                    dfs(cnt+1);
+                    dfs(i,j+1,cnt+1);
                     arr[i][j]='X';
                 }
             }
+            y=0;
         }
     }
 
