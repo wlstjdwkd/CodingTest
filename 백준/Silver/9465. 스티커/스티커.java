@@ -4,31 +4,40 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Main {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static StringTokenizer st;
-    static StringBuilder sb = new StringBuilder();
     static int n;
-    static int[][] arr;
+    static int[][] stickers, dp;
+
     public static void main(String[] args) throws IOException {
-        int T = Integer.parseInt(br.readLine());
-        for(int tc=0; tc<T; tc++){
-            n= Integer.parseInt(br.readLine());
-            arr= new int[2][n+1];
-            int[][] dp = new int[2][n+1];
-            for(int i=0; i<2; i++){
+        /* 입력 */
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int tc = Integer.parseInt(br.readLine());
+        for(int t=0; t<tc; t++){
+            n = Integer.parseInt(br.readLine());
+            stickers = new int[2][n];
+            dp = new int[2][n];
+            StringTokenizer st;
+            for (int i = 0; i < 2; i++) {
                 st = new StringTokenizer(br.readLine());
-                for(int j=1; j<=n; j++){
-                    arr[i][j] = Integer.parseInt(st.nextToken());
+                for (int j = 0; j < n; j++) {
+                    stickers[i][j] = Integer.parseInt(st.nextToken());
                 }
             }
-            dp[0][1]=arr[0][1];
-            dp[1][1]= arr[1][1];
-            for(int i=2; i<=n; i++){
-                dp[0][i] = Math.max(dp[1][i-1],dp[1][i-2])+arr[0][i];
-                dp[1][i] = Math.max(dp[0][i-1],dp[0][i-2])+arr[1][i];
-            }
-            sb.append(Math.max(dp[0][n], dp[1][n])).append("\n");
+
+            /* 출력 */
+            System.out.println(searchSticker());
         }
-        System.out.println(sb);
+    }
+
+    /* dp : 스티커 탐색 */
+    static int searchSticker() {
+        dp[0][0] = stickers[0][0];
+        dp[1][0] = stickers[1][0];
+
+        for(int i=1; i<n; i++) {
+            dp[0][i] = Math.max(dp[0][i-1], dp[1][i-1]+stickers[0][i]);
+            dp[1][i] = Math.max(dp[1][i-1], dp[0][i-1]+stickers[1][i]);
+        }
+
+        return Math.max(dp[0][n-1], dp[1][n-1]);
     }
 }
