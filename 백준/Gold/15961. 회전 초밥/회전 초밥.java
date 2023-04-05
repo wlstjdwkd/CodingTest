@@ -1,75 +1,58 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
-	static int n, d, k, c;
-	static int[] dish;
-	static int[] selected;
-	static int answer = 0;
-	public static void main(String[] args) throws IOException {
-		
-		/* 입력 및 변순 초기화 */
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(br.readLine());
-		n = Integer.parseInt(st.nextToken()); // 접시의 수
-		d = Integer.parseInt(st.nextToken()); // 초밥의 가짓수
-		k = Integer.parseInt(st.nextToken()); // 연속해서 먹는 접시의 수
-		c = Integer.parseInt(st.nextToken()); // 쿠폰 번호
-		dish = new int[n];
-		selected = new int[d+1];
-		for(int i=0; i<n; i++) {
-			dish[i] = Integer.parseInt(br.readLine());
-		}
-		
-		selectSushi();
-		
-		/* 출력 */
-		System.out.println(answer);
-	}
-	
-	/* Sliding Window : 스시 선택해서 최대 가짓수 구하기  */
-	private static void selectSushi() {
-		int left = 0;
-		int right = k;
-		int count = 1; // 쿠폰 스시 포함
-		
-		// 쿠폰 사용
-		selected[c] = 1;
-		
-		// 연속된 k개 스시 선택 - 초기 설정
-		for(int i=left; i<right; i++) {
-			if(selected[dish[i]] == 0) {
-				count++;
-			}
-			selected[dish[i]] += 1;
-		}
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringTokenizer st;
+    static int N,d,k,c, arr[], visited[];
+    public static void main(String[] args) throws IOException {
+        st = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(st.nextToken());
+        d = Integer.parseInt(st.nextToken());
+        k = Integer.parseInt(st.nextToken());
+        c = Integer.parseInt(st.nextToken());
 
-		// 연속된 k개 스시 선택 - 투포인터
-		while(left < n) {
-			
-			// 앞에 있는 스시 빼기
-			selected[dish[left]] -= 1;
-			// 스시 종류 하나 빼기
-			if(selected[dish[left]] == 0) {	
-				count--;
-			}
-			// 스시 종류 하나 더하기
-			if(selected[dish[right]] == 0) {
-				count++;
-			}
-			// 뒤에 있는 스시 더하기
-			selected[dish[right]] += 1;
-			
-			left++;
-			right++;
-			if(right == n) {
-				right = 0;
-			}
-			
-			// 최대 종류 갱신
-			if(answer < count) answer = count;
-		
-		}
-	}
+        arr = new int[N];
+        for(int i=0; i<N; i++){
+            arr[i] = Integer.parseInt(br.readLine());
+        }
 
+        visited = new int[d+1];
+
+        System.out.println(slide());
+    }
+    private static int slide(){
+        int inSlide=0, chance;
+        for(int i=0; i<k; i++){
+            if(visited[arr[i]]==0){
+                inSlide++;
+            }
+            visited[arr[i]]++;
+        }
+
+        chance=inSlide;
+        for(int i=1; i<N; i++){
+            if(chance<=inSlide){
+                if(visited[c]==0){
+                    chance = inSlide+1;
+                }
+                else{
+                    chance = inSlide;
+                }
+            }
+            visited[arr[i-1]]--;
+            if(visited[arr[i-1]]==0){
+                inSlide--;
+            }
+
+            if(visited[arr[(i+k-1) % N]] ==0){
+                inSlide++;
+            }
+            visited[arr[(i+k-1) % N]]++;
+        }
+        return chance;
+
+    }
 }
