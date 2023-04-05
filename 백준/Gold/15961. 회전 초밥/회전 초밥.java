@@ -46,15 +46,18 @@ public class Main {
 
 		// 연속된 k개 스시 선택 - 투포인터
 		while(left < n) {
-			selected[dish[left]] -= 1;
 			
+			// 앞에 있는 스시 빼기
+			selected[dish[left]] -= 1;
+			// 스시 종류 하나 빼기
 			if(selected[dish[left]] == 0) {	
 				count--;
 			}
-			
+			// 스시 종류 하나 더하기
 			if(selected[dish[right]] == 0) {
 				count++;
 			}
+			// 뒤에 있는 스시 더하기
 			selected[dish[right]] += 1;
 			
 			left++;
