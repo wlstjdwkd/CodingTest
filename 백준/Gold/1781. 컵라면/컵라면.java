@@ -18,23 +18,11 @@ public class Main {
 
         @Override
         public int compareTo(Question q){
-            if(this.deadline<q.deadline){
-                return -1;
+
+            if(this.deadline==q.deadline){
+                return q.ramen-this.ramen;
             }
-            else if(this.deadline==q.deadline){
-                if(this.ramen>q.ramen){
-                    return -1;
-                }
-                else if(this.ramen==q.ramen){
-                    return 0;
-                }
-                else{
-                    return 1;
-                }
-            }
-            else{
-                return 1;
-            }
+            return this.deadline-q.deadline;
         }
     }
     public static void main(String[] args) throws IOException {
@@ -71,30 +59,6 @@ public class Main {
             nowCnt+=pq.poll();
         }
         System.out.println(nowCnt);
-
-//        map = new HashMap<>();
-//        for(int i=0; i<N; i++){
-//            st = new StringTokenizer(br.readLine());
-//            long key = Long.parseLong(st.nextToken());
-//            long value = Long.parseLong(st.nextToken());
-//            if(map.containsKey(key)){
-//                //이미 있을 때
-//                if(map.get(key)<value){
-//                    //새로 들어온 값이 더 크면
-//                    map.put(key,value);
-//                }
-//            }
-//            else{
-//                //없으면 그냥 넣으셈
-//                map.put(key,value);
-//            }
-//        }
-//        int sum=0;
-//        for(Long key : map.keySet()){
-//            sum+=map.get(key);
-//        }
-//
-//        System.out.println(sum);
     }
 
 }
