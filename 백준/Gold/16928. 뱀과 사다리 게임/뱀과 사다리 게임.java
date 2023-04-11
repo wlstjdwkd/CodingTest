@@ -52,11 +52,12 @@ public class Main {
 			
 			if(visited[cur.x]) continue;
 			
+			// 방문 안했을 경우
 			visited[cur.x] = true;
 			
 			// 사다리나 뱀이 있는 경우
 			if(board[cur.x] != 0) {
-				cur = new Current(board[cur.x], cur.count);
+				cur = new Current(board[cur.x], cur.count); // 변한 위치로 업데이트
 			}
 			
 			// 없는 경우
@@ -64,7 +65,6 @@ public class Main {
 				if(cur.x + i > 100) break;
 				queue.add(new Current(cur.x+i, cur.count+1));
 			}
-			
 		}
 		
 		return answer;
