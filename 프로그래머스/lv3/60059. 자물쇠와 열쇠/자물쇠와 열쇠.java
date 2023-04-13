@@ -1,83 +1,117 @@
-import java.util.*;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Vector;
 
 class Solution {
+    
+    int[][] bottom, left, right, eLock;
+    
+    boolean[][] visited;
+
     public boolean solution(int[][] key, int[][] lock) {
         boolean answer = true;
-        
-        int keyLen = key.length;
-        int lockLen = lock.length;
-        
-        int mapLen = keyLen*2+lockLen-2;
-        int[][] map = new int[mapLen][mapLen];
-        
-        for(int i=keyLen-1; i<keyLen+lockLen-1; i++){
-            for(int j=keyLen-1; j<keyLen+lockLen-1; j++){
-                map[i][j] = lock[i-(keyLen-1)][j-(keyLen-1)];
+        int m = key.length, n = lock.length;
+
+        bottom = new int[m][m];
+        left = new int[m][m];
+        right = new int[m][m];
+
+        // Left 채우기
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < m; j++) {
+                left[m - j - 1][i] = key[i][j];
+            }
+        }
+
+        // Right 채우기
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < m; j++) {
+                right[j][m - 1 - i] = key[i][j];
             }
         }
         
-        //4방향 90도씩 로테이트해가면서 검사
-        for(int i=0; i<4; i++){
-            if(check(map,key,lockLen)){
-                return true;
+        // Bottom 채우기
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < m; j++) {
+                bottom[m - 1 - i][m - 1 - j] = key[i][j];
             }
-            rotate(key);
         }
         
+        // lock 확장하기
+        int emptyCount = 0; // lock에 존재하는 0의 수(즉, 1로 채워야하는 칸)
+
+        int len = n + 2 * (m - 1);
         
+        eLock = new int[len][len];
+        visited = new boolean[len][len];
+        
+        int[] range = { m - 1, m - 1, n + m - 2, n + m - 2 };
+
+        for (int i = 0; i < len; i++) {
+            for (int j = 0; j < len; j++) {
+                if (range[0] <= i && i <= range[2] && range[1] <= j && j <= range[3]) {
+                    eLock[i][j] = lock[i - (m - 1)][j - (m - 1)];
+                    visited[i][j] = true;
+                    if (eLock[i][j] == 0) // 1로 채워야하는 칸의 수
+                        emptyCount++;
+                } else
+                    eLock[i][j] = 0;
+            }
+        }
+
+
+        // left 비교
+        
+        answer = rangeCheck(key, emptyCount) || rangeCheck(left, emptyCount) || rangeCheck(right, emptyCount) || rangeCheck(bottom, emptyCount);
+        
+        return answer;
+    }
+
+    boolean rangeCheck(int[][] rKey, int emptyCount) {
+        boolean answer = false;
+
+        int keyLen = rKey.length;
+
+        int elockLen = eLock.length;
+
+        for (int i = 0; i <= elockLen - keyLen; i++) {
+            for (int j = 0; j <= elockLen - keyLen; j++) {
+                answer = possibleCheck(rKey, emptyCount, i, j);
+                if(answer)
+                    return true;
+            }
+        }
+
         return false;
     }
-    public boolean check(int[][] map, int[][] key, int lockLen){
-        int keyLen = key.length;
-        int mapLen = map.length;
-        for(int i=0; i<mapLen-keyLen+1; i++){
-            for(int j=0; j<mapLen-keyLen+1; j++){
-                
-                for(int k=0; k<keyLen; k++){
-                    for(int l=0; l<keyLen; l++){
-                        map[i+k][j+l] +=key[k][l];
-                    }
-                }
-                
-                boolean flag = true;
-                //lock이 다 1됐으면 true 아니면 다시 for문
-                for(int k=keyLen-1; k<keyLen+lockLen-1; k++){
-                    for(int l = keyLen-1; l<keyLen+lockLen-1; l++){
-                        if(map[k][l]!=1){
-                            flag=false;
-                            break;
-                        }
-                    }
-                    if(!flag) break;
-                }
-                
-                if(flag) return true;
-                
-                //map 원상 복귀
-                for(int k=0; k<keyLen; k++){
-                    for(int l=0; l<keyLen; l++){
-                        map[i+k][j+l] -= key[k][l];
-                    }
+
+    boolean possibleCheck(int[][] rKey, int emptyCount, int sx, int sy) {
+        boolean answer = false;
+        int count = 0;
+        int keyLen = rKey.length;
+        // sx와 sy가 배열에 존재하는지?
+        for (int i = 0; i < keyLen; i++, sx++) {
+            int tmp = sy;
+            for (int j = 0; j < keyLen; j++, tmp++) {
+                if(visited[sx][tmp]) {
+                    int sum = eLock[sx][tmp] + rKey[i][j];
+                    if(sum == 1) {
+                        if(eLock[sx][tmp] == 0) // 자물쇠의 0인 부분을 채우는 경우
+                            count++;
+                    }else // 0이거나 2이면 false를 반환한다.
+                        return false;
                 }
             }
         }
-        return false;
-    }
     
-    public void rotate(int[][] key){
-        int keyLen = key.length;
-        int[][] temp = new int[keyLen][keyLen];
-        
-        for(int i=0; i<keyLen; i++){
-            for(int j=0; j<keyLen; j++){
-                temp[i][j] = key[keyLen-j-1][i];
-            }
-        }
-        
-        for(int i=0; i<keyLen; i++){
-            for(int j=0; j<keyLen; j++){
-                key[i][j] = temp[i][j];
-            }
-        }
+        if(count == emptyCount)
+            return true;
+
+        return answer;
     }
+
 }
