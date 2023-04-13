@@ -85,5 +85,18 @@ Empty
       </table>
 <p><a href="http://tech.kakao.com/2017/11/14/kakao-blind-recruitment-round-3/" target="_blank" rel="noopener">해설 보러가기</a></p>
 
+### 문제풀이
+
+        <p>예를 들어, 진법 n=2, 미리 구할 숫자의 갯수 t=4, 게임에 참가하는 인원 m=2, 튜브의 순서 p=1 이라고 하겠다.</p>
+        <p>arraylist에 n진수 단어들을 한글자씩 나열 할 것이다.</p>
+        <p>단어의 개수는 최대 t*m 개수 까지 나올수 밖에 없다. 그러므로 list.size()가 t*m이 될때까지 반복한다.</p>
+        <p>맨 처음 list에 0을 넣고 1부터 차례대로 나머지를 구한다.</p>
+        <p>1부터) 1%2 = 1 이고, 1/2=0 이므로 1을 리스트에 넣고 num을 추가한다.</p>
+        <p>2) 2%2=0 이고, 2/2=1 이므로 수가 남아있기 때문에 0을 임시 저장하고 차례를 넘긴다.</p>
+        <p>1%2=1, 1/2=0 이기때문에, 앞서 구했던 0을 뒤에 붙여서 1,0을 차례대로 list에 넣는다.</p>
+        <p>list 사이즈가 t*m이 될 때까지 반복한다.</p>
+
+![image](https://user-images.githubusercontent.com/74286424/231700060-923df484-b6c5-4478-aacf-51d8c1dc1df0.png)
+
 
 > 출처: 프로그래머스 코딩 테스트 연습, https://programmers.co.kr/learn/challenges
