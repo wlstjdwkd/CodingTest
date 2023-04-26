@@ -19,18 +19,23 @@ public class Main {
         visited[n] = 1;
         while(!q.isEmpty()) {
             int[] cur = q.poll();
-
-            if(cur[0]-1 >= 0 && (visited[cur[0]-1] > cur[1] || visited[cur[0]-1] == 0)) {
-                visited[cur[0]-1] = cur[1] + 1;
-                q.offer(new int[] {cur[0] - 1, cur[1] + 1});
+            
+            int next = cur[0] - 1;
+            if(next >= 0 && (visited[next] > cur[1] || visited[next] == 0)) {
+                visited[next] = cur[1] + 1;
+                q.offer(new int[] {next, cur[1] + 1});
             }
-            if(cur[0]+1 <= 100000 && (visited[cur[0]+1] > cur[1] || visited[cur[0]+1] == 0)) {
-                visited[cur[0]+1] = cur[1] + 1;
-                q.offer(new int[]{cur[0] + 1, cur[1] + 1});
+            
+            next = cur[0] + 1;
+            if(next <= 100000 && (visited[next] > cur[1] || visited[next] == 0)) {
+                visited[next] = cur[1] + 1;
+                q.offer(new int[]{next, cur[1] + 1});
             }
-            if(cur[0]*2 <= 100000 && (visited[cur[0]*2] > cur[1] || visited[cur[0]*2] == 0)) {
-                visited[cur[0]*2] = cur[1];
-                q.offer(new int[] {cur[0] * 2, cur[1]});
+            
+            next = cur[0] * 2;
+            if(next <= 100000 && (visited[next] > cur[1] || visited[next] == 0)) {
+                visited[next] = cur[1];
+                q.offer(new int[] {next, cur[1]});
             }
         }
 
