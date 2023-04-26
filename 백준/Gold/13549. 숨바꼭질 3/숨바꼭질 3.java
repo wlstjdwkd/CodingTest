@@ -1,68 +1,39 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.PriorityQueue;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.io.*;
 
 public class Main {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static StringTokenizer st;
-    static int N,K;
-    static int[] distance = new int[100001];
-    static PriorityQueue<Point> pq =new PriorityQueue<>();
-    static class Point implements Comparable<Point>{
-        int loc,cost;
 
-        public Point(int loc, int cost) {
-            this.loc = loc;
-            this.cost = cost;
-        }
 
-        @Override
-        public int compareTo(Point that){
-            return this.cost-that.cost;
-        }
-    }
     public static void main(String[] args) throws IOException {
-        st= new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-        K = Integer.parseInt(st.nextToken());
-
-        Arrays.fill(distance,Integer.MAX_VALUE);
-        find();
-        System.out.println(distance[K]);
-
+        /* 입력 및 변수 초기화 */
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String[] infor = br.readLine().split(" ");
+        System.out.println(findSister(Integer.parseInt(infor[0]), Integer.parseInt(infor[1])));
     }
-    private static void find(){
-        pq.add(new Point(N,0));
-        distance[N] =0;
-        while(!pq.isEmpty()){
-            Point p = pq.poll();
-            int nloc, ncost;
 
-            nloc = p.loc+1;
-            ncost = p.cost+1;
-            if(nloc<=100000 && ncost<distance[nloc]){
-                distance[nloc] = ncost;
-                pq.add(new Point(nloc,ncost));
+    /* BFS : 동생 찾는 시간 구하기 */
+    private static int findSister(int n, int k) {
+        Deque<int[]> q = new ArrayDeque<>();
+        int[] visited = new int[100_001];
+        q.offer(new int[]{n, 1}); // 위치, 시간
+        visited[n] = 1;
+        while(!q.isEmpty()) {
+            int[] cur = q.poll();
+
+            if(cur[0]-1 >= 0 && (visited[cur[0]-1] > cur[1] || visited[cur[0]-1] == 0)) {
+                visited[cur[0]-1] = cur[1] + 1;
+                q.offer(new int[] {cur[0] - 1, cur[1] + 1});
             }
-
-            nloc = p.loc-1;
-            ncost = p.cost+1;
-            if(0<=nloc && ncost<distance[nloc]){
-                distance[nloc] = ncost;
-                pq.add(new Point(nloc,ncost));
+            if(cur[0]+1 <= 100000 && (visited[cur[0]+1] > cur[1] || visited[cur[0]+1] == 0)) {
+                visited[cur[0]+1] = cur[1] + 1;
+                q.offer(new int[]{cur[0] + 1, cur[1] + 1});
             }
-
-            nloc = p.loc*2;
-            ncost = p.cost;
-            if(nloc<=100000 && ncost<distance[nloc]){
-                distance[nloc] = ncost;
-                pq.add(new Point(nloc,ncost));
+            if(cur[0]*2 <= 100000 && (visited[cur[0]*2] > cur[1] || visited[cur[0]*2] == 0)) {
+                visited[cur[0]*2] = cur[1];
+                q.offer(new int[] {cur[0] * 2, cur[1]});
             }
-
         }
-    }
 
+        return visited[k] - 1;
+    }
 }
