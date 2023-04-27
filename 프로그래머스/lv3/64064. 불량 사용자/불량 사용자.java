@@ -2,7 +2,7 @@ import java.util.*;
 
 class Solution {
     
-    public HashSet<String> set;
+    public HashSet<ArrayList<String>> set;
     public boolean[] checked;
     
     
@@ -23,12 +23,12 @@ class Solution {
             ArrayList<String> list = new ArrayList<String>(result);
             Collections.sort(list);
             
-            StringBuilder sb = new StringBuilder();
-            for(String str : list){
-                sb.append(str+" ");
-            }
+            // StringBuilder sb = new StringBuilder();
+            // for(String str : list){
+            //     sb.append(str+" ");
+            // }
             
-            set.add(sb.toString());
+            set.add(list);
             
             return;
         }
