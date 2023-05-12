@@ -1,82 +1,82 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class Main {
-    static final int INF = 987654321;
-    static int n;
-    static int[] dist;
-    static List<Road>[] roads;
-    static class Road {
-        int dest;
-        int time;
-        public Road(int destination, int time) {
-            this.dest = destination;
-            this.time = time;
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringTokenizer st;
+    static StringBuilder sb = new StringBuilder();
+    static int N;
+    static ArrayList<ArrayList<Node>> graph = new ArrayList<>();
+    static class Node{
+        int node, weight;
+
+        public Node(int node, int weight) {
+            this.node = node;
+            this.weight = weight;
         }
     }
 
+    private static boolean bellmanford(){
+        int[] distance = new int[N+1];
+        boolean update = false;
+        for(int i=1; i<=N; i++){
+            update = false;
+            for(int cur=1; cur<=N; cur++){
+                for(Node next : graph.get(cur)){
+                    if(distance[next.node] > distance[cur]+ next.weight){
+                        distance[next.node] = distance[cur] + next.weight;
+                        update = true;
+                    }
+                }
+            }
+
+            if(!update){
+                break;
+            }
+        }
+        return update;
+    }
     public static void main(String[] args) throws IOException {
-
-        /* 입력 및 변수 초기화 */
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int t = Integer.parseInt(br.readLine());
-        StringTokenizer st;
-        int roadNum, wormholeNum;
-        while(t-- > 0) {
+        int TC = Integer.parseInt(br.readLine());
+        for(int t=1; t<=TC; t++){
+            String answer="";
             st = new StringTokenizer(br.readLine());
-            n = Integer.parseInt(st.nextToken());
-            roadNum = Integer.parseInt(st.nextToken());
-            wormholeNum = Integer.parseInt(st.nextToken());
-            dist = new int[n+1];
-            roads = new List[n+1];
-            for(int i=0; i<=n; i++) {
-                roads[i] = new ArrayList<>();
+            N = Integer.parseInt(st.nextToken());
+            int M = Integer.parseInt(st.nextToken());
+            int W = Integer.parseInt(st.nextToken());
+            graph = new ArrayList<>();
+            for(int i=0; i<=N; i++){
+                graph.add(new ArrayList<>());
             }
-            while(roadNum-- > 0) {
+
+            for(int i=0; i< M; i++){
                 st = new StringTokenizer(br.readLine());
-                int a = Integer.parseInt(st.nextToken());
-                int b = Integer.parseInt(st.nextToken());
-                int time = Integer.parseInt(st.nextToken());
-                roads[a].add(new Road(b, time));
-                roads[b].add(new Road(a, time));
+                int S = Integer.parseInt(st.nextToken());
+                int E = Integer.parseInt(st.nextToken());
+                int T = Integer.parseInt(st.nextToken());
+                graph.get(S).add(new Node(E,T));
+                graph.get(E).add(new Node(S,T));
             }
-            while(wormholeNum-- > 0) {
+
+            for(int i=0; i<W; i++){
                 st = new StringTokenizer(br.readLine());
-                int a = Integer.parseInt(st.nextToken());
-                int b = Integer.parseInt(st.nextToken());
-                int time = Integer.parseInt(st.nextToken());
-                roads[a].add(new Road(b, -time));
+                int S = Integer.parseInt(st.nextToken());
+                int E = Integer.parseInt(st.nextToken());
+                int T = Integer.parseInt(st.nextToken());
+                graph.get(S).add(new Node(E,-1*T));
             }
-            System.out.println(searchRoad());
-        }
 
-
-    }
-
-    /* Bellman-Ford : 시간을 되돌아가면서, 출발지로 돌아올 수 있는 길 찾기 */
-    private static String searchRoad() {
-        boolean isMinusCycle = false;
-        Arrays.fill(dist, INF);
-        dist[1] = 0;
-
-        // 노드의 개수 - 1 만큼 반복
-        for(int i=1; i<n; i++) {
-            for(int j=1; j<roads.length; j++) {
-                for(Road road : roads[j]) {
-                    dist[road.dest] = Math.min(dist[road.dest], dist[j] + road.time);
-                }
+            if(bellmanford()){
+                answer = "YES";
             }
-        }
-
-        // 값이 갱신되면 음수 사이클 존재
-        for(int j=1; j<roads.length; j++) {
-            for(Road road : roads[j]) {
-                if(dist[road.dest] > dist[j] + road.time) {
-                    isMinusCycle = true;
-                }
+            else{
+                answer = "NO";
             }
+            sb.append(answer).append("\n");
         }
-
-        return (isMinusCycle) ? "YES" : "NO";
+        System.out.println(sb);
     }
 }
