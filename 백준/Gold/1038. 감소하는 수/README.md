@@ -1,4 +1,4 @@
-# [Gold V] 감소하는 수 - 1038 
+# [Gold V] 감소하는 수 - 1038   
 
 [문제 링크](https://www.acmicpc.net/problem/1038) 
 
