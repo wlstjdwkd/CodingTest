@@ -1,4 +1,4 @@
-# [Gold II] 게임 - 1103 
+# [Gold II] 게임 - 1103    
 
 [문제 링크](https://www.acmicpc.net/problem/1103) 
 
