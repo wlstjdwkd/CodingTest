@@ -1,4 +1,4 @@
-# [Gold V] 팀원 모집 - 11578 
+# [Gold V] 팀원 모집 - 11578  
 
 [문제 링크](https://www.acmicpc.net/problem/11578) 
 
