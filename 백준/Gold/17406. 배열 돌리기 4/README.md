@@ -1,4 +1,4 @@
-# [Gold IV] 배열 돌리기 4 - 17406 
+# [Gold IV] 배열 돌리기 4 - 17406
 
 [문제 링크](https://www.acmicpc.net/problem/17406) 
 
