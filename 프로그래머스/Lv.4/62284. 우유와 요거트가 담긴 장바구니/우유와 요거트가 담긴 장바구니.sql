@@ -1,0 +1,10 @@
+-- 코드를 입력하세요
+SELECT CART_ID
+FROM (
+    SELECT CART_ID
+    ,SUM(CASE WHEN NAME = 'Yogurt' THEN 1 ELSE 0 END) AS cntY
+    ,SUM(CASE WHEN NAME = 'Milk' THEN 1 ELSE 0 END) AS cntM
+    FROM CART_PRODUCTS
+    GROUP BY CART_ID
+) AS A
+WHERE A.cntY > 0 AND A.cntM > 0
