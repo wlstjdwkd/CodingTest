@@ -4,10 +4,10 @@ class Solution {
     public List<List<Integer>> map = new ArrayList<>();
     public int N, answer;
     public int dfs(int cur, int before){
-        //리프 노드
-        if(map.get(cur).size() == 1 && map.get(cur).get(0) == before){
-            return 1;
-        }
+//         //리프 노드
+//         if(map.get(cur).size() == 1 && map.get(cur).get(0) == before){
+//             return 1;
+//         }
         
         //리프 노드 x
         int tmpRes = 0;
