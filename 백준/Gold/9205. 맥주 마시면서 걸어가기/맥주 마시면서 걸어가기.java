@@ -1,59 +1,77 @@
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.StringTokenizer;
 
 public class Main {
-	static int n;
-	static int[][] location; // 집, 편의점, 페스티벌의 위치
-	static boolean[][] map; // i,j까지 갈 수 있는지
+	static int n, sx, sy, dx, dy;
 	public static void main(String[] args) throws IOException {
-		
-		/* 입력 */
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		int tc = Integer.parseInt(br.readLine());
-		while(tc-- > 0) {
-			n = Integer.parseInt(br.readLine()) + 2;
-			location = new int[n][2];
-			map = new boolean[n][n];
-			String[] infor;
-			for(int i=0; i<n; i++) {
-				infor = br.readLine().split(" ");
-				for(int j=0; j<n; j++) {		
-					location[i][0] = Integer.parseInt(infor[0]);
-					location[i][1] = Integer.parseInt(infor[1]);
-				}
+		StringTokenizer st;
+		StringBuilder sb = new StringBuilder();
+		int t = Integer.parseInt(br.readLine());
+		
+		for (int tc = 0; tc < t; tc++) {
+			n = Integer.parseInt(br.readLine());
+			List<int []> list = new ArrayList<>();
+			for (int i = 0; i < n+2; i++) {
+				st = new StringTokenizer(br.readLine());
+				int x = Integer.parseInt(st.nextToken());
+				int y = Integer.parseInt(st.nextToken());
 				
-			}
-			
-			makeMap();
-			gotoFestival();
-			
-			/* 실행 */
-			if(map[0][n-1]) System.out.println("happy");
-			else System.out.println("sad");
-		}
-	}
-	/* map초기화  */
-	private static void makeMap() {
-		for(int i=0; i<n; i++) {
-			for(int j=i+1; j<n; j++) {
-				if(Math.abs(location[i][0] - location[j][0]) + Math.abs(location[i][1] - location[j][1]) <= 1000) {
-					map[i][j] = true;
-					map[j][i] = true;
+				if(i == 0) {
+					sx = x;
+					sy = y;
+				}
+				else if(i == n+1) {
+					dx = x;
+					dy = y;
+				}
+				else {
+					list.add(new int[] {x,y});
 				}
 			}
-		}		
+			sb.append(bfs(list) ? "happy\n" : "sad\n");
+		}
+		System.out.println(sb.toString());
 	}
-
-	/* Floyd Warshall : 페스티벌에 가기 */
-	private static void gotoFestival() {;
-		for(int k=0; k<n; k++) {
-			for(int i=0; i<n; i++) {
-				for(int j=0; j<n; j++) {
-					if(map[i][k] && map[k][j]) {
-						map[i][j] = true;
+	
+	private static boolean bfs(List<int[]> list) {
+		Queue<int[]> q = new ArrayDeque<>();
+		
+		boolean[] visited = new boolean[n];
+		q.add(new int[] {sx, sy});
+		
+		while(!q.isEmpty()) {
+			int[] pos = q.poll();
+			int px = pos[0];
+			int py = pos[1];
+			
+			if(Math.abs(px-dx) + Math.abs(py-dy) <= 1000) {
+				return true;
+			}
+			
+			for (int i = 0; i < n; i++) {
+				if(!visited[i]) {
+					int nx = list.get(i)[0], ny =list.get(i)[1];
+					int dis = Math.abs(px-nx) + Math.abs(py-ny);
+					if(dis<=1000) {
+						visited[i] = true;
+						q.add(new int[] {nx,ny});
 					}
 				}
 			}
 		}
+		return false;
 	}
 }
