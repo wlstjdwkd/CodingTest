@@ -1,87 +1,103 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.StringTokenizer;
 
 public class Main {
-    static int[][] gear = new int[4][8];
-    static int[][] tmpGear = new int[4][8];
-
-    public static void main(String[] args) throws IOException {
-
-        /* 입력 */
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        for(int i=0; i<4; i++) {
-            String tmp = br.readLine();
-            for(int j=0; j<8; j++) {
-                gear[i][j] = tmp.charAt(j) - '0';
-            }
-        }
-        int n = Integer.parseInt(br.readLine());
-        for(int i=0; i<n; i++) {
-            String[] tmp = br.readLine().split(" ");
-            checkPoles(Integer.parseInt(tmp[0])-1, Integer.parseInt(tmp[1]));
-        }
-
-        /* 출력 */
-        System.out.println(getScore());
-    }
-
-    /* 같은/다른 극인지 확인하기 */
-    static void checkPoles(int num, int dir) {
-        int[] rotated; rotated = new int[4];
-        rotated[num] = dir;
-
-        // 왼쪽 톱니바퀴 확인
-        for(int i=num; i>0; i--) {
-            if(gear[i][6] != gear[i-1][2]) {
-                rotated[i-1] = rotated[i]*-1;
-            }
-        }
-
-        // 오른쪽 톱니바퀴 확인
-        for(int i=num; i<3; i++) {
-            if(gear[i][2] != gear[i+1][6]) {
-               rotated[i+1] = rotated[i]*-1;
-            }
-        }
-
-        // 극이 다른 톱니바퀴만 회전
-        for(int i=0; i<4; i++) {
-            if(rotated[i] == 0) continue;
-            rotateGear(i, rotated[i]);
-        }
-    }
-
-    /* 톱니바퀴 회전시키기 */
-    static void rotateGear(int num, int dir){
-
-        // 시계 방향
-        if(dir == 1) {
-            tmpGear[num][0] = gear[num][7];
-            for(int i=1; i<8; i++){
-                tmpGear[num][i] = gear[num][i-1];
-            }
-        }
-
-        // 반시계 방향
-        else {
-            for(int i=0; i<7; i++){
-                tmpGear[num][i] = gear[num][i+1];
-            }
-            tmpGear[num][7] = gear[num][0];
-        }
-
-        gear[num] = tmpGear[num].clone(); // 배열 복사
-    }
-
-    /* 최종 톱니바퀴 상태 구하기 */
-    static int getScore() {
-        int score = 0;
-        for(int i=0; i<4; i++) {
-            if(gear[i][0] == 1) {
-                score += Math.pow(2, i);
-            }
-        }
-        return score;
-    }
+	
+	static int gear[][];
+	static int d[];
+	static int n,m;
+	static int k;
+	
+	public static void main(String[] args) throws IOException {
+		init();
+	}
+	
+	private static void init() throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st;
+		
+		gear = new int[4][8];
+		for (int i = 0; i < 4; i++) {
+			String s = br.readLine();
+			for (int j = 0; j < 8; j++) {
+				gear[i][j] = s.charAt(j) - '0';
+			}
+		}
+		
+		k = Integer.parseInt(br.readLine());
+		while(k-->0) {
+			st = new StringTokenizer(br.readLine());
+			
+			int gearN = Integer.parseInt(st.nextToken()) - 1;
+			int turn = Integer.parseInt(st.nextToken());
+			
+			d = new int[4];
+			d[gearN] = turn;
+			checkDir(gearN);
+			
+			gearTurn();
+		}
+		
+		int ans = 0;
+		if(gear[0][0] == 1) ans+=1;
+		if(gear[1][0] == 1) ans+=2;
+		if(gear[2][0] == 1) ans+=4;
+		if(gear[3][0] == 1) ans+=8;
+		System.out.println(ans);
+		
+	}
+	
+	private static void gearTurn() {
+		int temp = 0;
+		for (int i = 0; i < 4; i++) {
+			if(d[i] == 1) {
+				temp = gear[i][7];
+				for (int j = 7; j > 0; j--) {
+					gear[i][j] = gear[i][j-1];
+				}
+				
+				gear[i][0] = temp;
+			}
+			
+			else if(d[i]== -1) {
+				temp = gear[i][0];
+				for (int j = 0; j < 7; j++) {
+					gear[i][j] = gear[i][j+1];
+				}
+				gear[i][7] = temp;
+			}
+		}
+	}
+	
+	private static void checkDir(int gearN) {
+		for (int i = gearN-1; i >=0; i--) {
+			if(gear[i][2] != gear[i+1][6]) {
+				d[i] = -d[i+1];
+			}
+			else {
+				break;
+			}
+		}
+		
+		for (int i = gearN+1; i < 4; i++) {
+			if (gear[i][6] != gear[i-1][2]) {
+				d[i] = -d[i-1];
+			}
+			else {
+				break;
+			}
+		}
+	}
 }
