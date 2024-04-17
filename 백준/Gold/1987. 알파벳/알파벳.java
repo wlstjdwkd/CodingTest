@@ -1,46 +1,58 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Scanner;
+import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class Main {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static StringTokenizer st;
-    static int R,C;
-    static int[][] arr;
-    static boolean[] visit = new boolean[26];
-    static int[] dx={-1,1,0,0};
-    static int[] dy = {0,0,-1,1};
-    static int ans;
-    public static void main(String[] args) throws IOException {
-        st = new StringTokenizer(br.readLine());
-        R = Integer.parseInt(st.nextToken());
-        C = Integer.parseInt(st.nextToken());
-        arr = new int[R][C];
 
-        for(int i=0; i<R; i++){
-            String s = br.readLine();
-            for(int j=0; j<C; j++){
-                arr[i][j] = s.charAt(j)-'A';
+
+    static int r, c;
+    static int[][] board;
+    static int[] dx = {-1, 0, 1, 0};
+    static int[] dy = {0, 1, 0, -1};
+    static int max = 0;
+    static boolean[] alpha;
+
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+
+        r = scan.nextInt();
+        c = scan.nextInt();
+        scan.nextLine();
+
+        //board를 입력받는다.
+        board = new int[r][c];
+        for(int i = 0; i < r; i++) {
+            String str = scan.nextLine();
+            for(int j = 0; j < c; j++) {
+                board[i][j] = str.charAt(j) - 'A';
             }
         }
-        dfs(0,0,0);
-        System.out.println(ans);
+
+        alpha = new boolean[26]; //알파벳을 이전에 방문했는지 여부 체크.
+        backtracking(0, 0, 1);
+        System.out.println(max);
     }
-    private static void dfs(int r, int c, int cnt){
-        if(visit[arr[r][c]]){
-            ans = Math.max(ans, cnt);
-        }
-        else{
-            visit[arr[r][c]]=true;
-            for(int i= 0; i<4; i++){
-                int nx = r+dx[i];
-                int ny = c + dy[i];
-                if(nx>=0&&nx<R && ny>=0 && ny<C){
-                    dfs(nx,ny,cnt+1);
+
+    public static void backtracking(int x, int y, int len) {
+        alpha[board[x][y]] = true;
+        max = Math.max(max, len);
+
+        for(int i = 0; i < 4; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+            if(nx >= 0 && ny >= 0 && nx < r && ny < c) {
+                if(alpha[board[nx][ny]] == false) {
+                    backtracking(nx, ny, len + 1);
+                    alpha[board[nx][ny]] = false;
                 }
             }
-            visit[arr[r][c]]=false;
         }
     }
 }
