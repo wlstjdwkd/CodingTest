@@ -1,114 +1,112 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Time;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.StringTokenizer;
 
 public class Main {
-    static int n, appleCnt, orderCnt;
-    static List<Current> snake = new LinkedList<>();
-    static boolean[][] isApple;
-    static List<Order> orders = new ArrayList<>();
-    static class Current {
-        int x, y;
-        char direction;
-        public Current(int x, int y){
-            this.x = x;
-            this.y = y;
-        }
-    }
-    static class Order {
-        int time;
-        char direction;
-        public Order(int time, char dir) {
-            this.time = time;
-            this.direction = dir;
-        }
-    }
 
-    public static void main(String[] args) throws IOException {
-        
-    	/* 입력 */
+   static int[][] map;
+   static List<int[]> snake = new ArrayList<>();
+   static Map<Integer, String> hash = new HashMap<>();
+   static int[] dx = {0,1,0,-1};
+   static int[] dy = {1,0,-1,0};
+   static int n,k,l;
+
+    public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
         n = Integer.parseInt(br.readLine());
-        isApple = new boolean[n][n];
-        appleCnt = Integer.parseInt(br.readLine());
-        for(int i=0; i<appleCnt; i++) {
-            String[] infor = br.readLine().split(" ");
-            isApple[Integer.parseInt(infor[0])-1][Integer.parseInt(infor[1])-1] = true;
+        k = Integer.parseInt(br.readLine());
+        map = new int[n][n];
+
+        for(int i=0; i<k; i++){
+          st = new StringTokenizer(br.readLine());
+          int a = Integer.parseInt(st.nextToken())-1;
+          int b = Integer.parseInt(st.nextToken())-1;
+          map[a][b] = 1;
         }
-        orderCnt = Integer.parseInt(br.readLine());
-        for(int i=0; i<orderCnt; i++) {
-            String[] infor = br.readLine().split(" ");
-            orders.add(new Order(Integer.parseInt(infor[0]), infor[1].charAt(0)));
+
+        l = Integer.parseInt(br.readLine());
+        for(int i=0; i<l; i++){
+          st = new StringTokenizer(br.readLine());
+          int x = Integer.parseInt(st.nextToken());
+          String c = st.nextToken();
+          hash.put(x,c);
         }
-        
-        
-        System.out.println(playDummy());
-    }
-    
-    /* 더미 실행 */
-    private static int playDummy() {
-    	int[] dx = {-1, 0, 1, 0};
-    	int[] dy = {0, 1, 0, -1};
-    	int x = 0, y = 0; // (0, 0)에서 시작
-    	int head = 1; // head 오른쪽으로 초기화
-    	int time = 0; // 시간
-    	int orderIndex = 0; 
-    	snake.add(new Current(x, y));
-    	
-        while(true) {
-        	
-        	// 시간 재기
-        	time++;      	
-        	
-        	int nx = x + dx[head];
-	        int	ny = y + dy[head];
-        	
-	        // 종료 조건
-        	if(checkFinish(nx, ny)) break;
-        	
-        	snake.add(new Current(nx, ny));
-        	
-        	// 사과가 있을때
-        	if(isApple[nx][ny]) isApple[nx][ny] = false;
-        	// 없을때
-        	else snake.remove(0);
-        	
-        	
-        	// 회전 방향
-        	if(orderIndex < orderCnt && time == orders.get(orderIndex).time) {
-        		
-        		// 왼쪽으로 90도
-        		if(orders.get(orderIndex).direction == 'L') {
-        			head -= 1;
-        			if(head == -1) head = 3;
-        		}
-        		// 오른쪽으로 90도
-        		else head = (head + 1) % 4;
-        		
-        		orderIndex++;
-        	}
-        	
-        	x = nx;
-        	y = ny;
-        }
-        return time;
+
+        solve();
     }
 
-    /* 종료조건 : 범위 벗어나거나 몸통 만났을때 */
-	private static boolean checkFinish(int nx, int ny) {
-		if(nx < 0 || nx >= n || ny < 0 || ny >= n) return true;	
-				
-		for(int i=0; i<snake.size(); i++) {
-    		if(snake.get(i).x == nx && snake.get(i).y == ny) return true;    		  		
-    	}
-		
-    	return false;
-	}
-	
+    static void solve(){
+      int cx =0, cy = 0;
+      int time = 0;
+      int d = 0;
+      snake.add(new int[]{0,0});
+
+      while(true){
+        time++;
+
+        int nx = cx+ dx[d];
+        int ny = cy + dy[d];
+
+        if(isFinish(nx,ny)){
+          break;
+        }
+
+        if(map[nx][ny] == 1){
+          map[nx][ny] = 0;
+          snake.add(new int[] {nx,ny});
+        }
+
+        else{
+          snake.add(new int[] {nx,ny});
+          snake.remove(0);
+        }
+
+        if(hash.containsKey(time)){
+          if(hash.get(time).equals("D")){
+            d++;
+            if(d==4){
+              d=0;
+            }
+          }
+          else{
+            d--;
+            if(d==-1){
+              d=3;
+            }
+          }
+        }
+
+        cx = nx;
+        cy = ny;
+      }
+      System.out.println(time);
+    }
+
+    private static boolean isFinish(int nx, int ny){
+      if(nx<0 || ny<0 || nx>=n || ny>=n){
+        return true;
+      }
+
+      for(int i=0; i<snake.size(); i++){
+        int[] t = snake.get(i);
+        if(nx == t[0] && ny== t[1]){
+          return true;
+        }
+
+
+      }
+
+      return false;
+    }
 
 }
