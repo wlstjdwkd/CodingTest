@@ -27,8 +27,6 @@ public class Main {
     public static void main(String[] args) throws IOException {
         //입력값 처리하는 BufferedReader
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        //결과값 출력하는 BufferedWriter
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         int N = Integer.parseInt(br.readLine());
         StringTokenizer st;
         //선의 정보 기준 정렬되어 사용할 PriorityQueue
@@ -61,9 +59,6 @@ public class Main {
                 end = cur.y;
         }
         result += end - start;	//마지막 선의 길이 더하기
-        bw.write(String.valueOf(result));	//선의 총 길이 BufferedWriter 저장
-        bw.flush();		//결과 출력
-        bw.close();
-        br.close();
+        System.out.println(result);
     }
 }
