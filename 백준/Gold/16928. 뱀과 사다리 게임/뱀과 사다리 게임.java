@@ -1,72 +1,90 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.security.PublicKey;
 import java.util.*;
 
 public class Main {
-	static int n, m;
-	static int[] board = new int[101];
-	
-	public static void main(String[] args) throws IOException {
-		
-		/* 입력 및 변수 초기화 */
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(br.readLine());
-		n = Integer.parseInt(st.nextToken());
-		m = Integer.parseInt(st.nextToken());
-		for(int i=0; i<n; i++) {
-			st = new StringTokenizer(br.readLine());
-			board[Integer.parseInt(st.nextToken())] = Integer.parseInt(st.nextToken());
-		}
-		for(int i=0; i<m; i++) {
-			st = new StringTokenizer(br.readLine());
-			board[Integer.parseInt(st.nextToken())] = Integer.parseInt(st.nextToken());
-		}
-		
-		System.out.println(playGame());
-		
-	}
-	
-	/* BFS : 게임 실행 */
-	private static int playGame() {
-		class Current {
-			int x, count;
-			public Current(int x, int count) {
-				this.x = x;
-				this.count = count;
-			}
-		}
-		Deque<Current> queue = new ArrayDeque<>();
-		queue.add(new Current(1, 0));
-		boolean[] visited = new boolean[101];
-		int answer = 100;
-		
-		while(!queue.isEmpty()) {
-			Current cur = queue.poll();
-			
-			// 도착
-			if(cur.x == 100) {
-				if(answer > cur.count) {
-					answer = cur.count;
-				}
-				break;
-			}
-			
-			if(visited[cur.x]) continue;
-			
-			// 방문 안했을 경우
-			visited[cur.x] = true;
-			
-			// 사다리나 뱀이 있는 경우
-			if(board[cur.x] != 0) {
-				cur = new Current(board[cur.x], cur.count); // 변한 위치로 업데이트
-			}
-			
-			// 없는 경우
-			for(int i=1; i<=6; i++) {
-				if(cur.x + i > 100) break;
-				queue.add(new Current(cur.x+i, cur.count+1));
-			}
-		}
-		
-		return answer;
-	}
+    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private static StringTokenizer st;
+    private static StringBuilder sb = new StringBuilder();
+
+    private static int stoi(String s){
+        return Integer.parseInt(s);
+    }
+
+//    private static class Point{
+//        int x, y;
+//        Point(int x, int y){
+//            this.x = x;
+//            this.y = y;
+//        }
+//    }
+
+//    private static boolean isArea(int x, int y){
+//        return 0<= x && x<N && 0<=y && y<N;
+//    }
+
+    private static int[] board;
+
+    public static void main(String[] args) throws IOException {
+        st = new StringTokenizer(br.readLine());
+        int n = stoi(st.nextToken());
+        int m = stoi(st.nextToken());
+
+        board = new int[101];
+
+        for(int i=1; i<101; i++){
+            board[i] = i;
+        }
+
+        while(n-->0){
+            st = new StringTokenizer(br.readLine());
+            int x = stoi(st.nextToken());
+            int y = stoi(st.nextToken());
+
+            board[x] = y;
+        }
+
+        while(m-->0){
+            st = new StringTokenizer(br.readLine());
+            int x = stoi(st.nextToken());
+            int y = stoi(st.nextToken());
+
+            board[x] = y;
+        }
+
+        int result = bfs();
+
+        System.out.println(result);
+    }
+
+    private static int bfs(){
+        int[] check = new int[101];
+        Queue<Integer> q = new ArrayDeque<>();
+        q.add(1);
+
+        while(true){
+            int visitedNum = q.poll();
+
+            for(int i=1; i<=6; i++){
+                int newNode = visitedNum + i;
+
+                if(newNode > 100){
+                    break;
+                }
+
+                if(check[board[newNode]] == 0){
+                    q.add(board[newNode]);
+                    check[board[newNode]] = check[visitedNum] + 1;
+                }
+
+                if(board[newNode] == 100){
+                    return check[100];
+                }
+            }
+        }
+    }
+
+
 }
