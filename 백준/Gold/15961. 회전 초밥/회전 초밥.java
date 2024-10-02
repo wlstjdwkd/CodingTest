@@ -1,58 +1,77 @@
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.security.PublicKey;
+import java.util.*;
+import java.util.List;
 
 public class Main {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static StringTokenizer st;
-    static int N,d,k,c, arr[], visited[];
+    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private static StringTokenizer st;
+    private static StringBuilder sb = new StringBuilder();
+
+    private static int stoi(String s){
+        return Integer.parseInt(s);
+    }
+
+//    private static class Point{
+//        int x, y;
+//        Point(int x, int y){
+//            this.x = x;
+//            this.y = y;
+//        }
+//    }
+
+//    private static boolean isArea(int x, int y){
+//        return 0<= x && x<n && 0<=y && y<m;
+//    }
+
+
     public static void main(String[] args) throws IOException {
         st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-        d = Integer.parseInt(st.nextToken());
-        k = Integer.parseInt(st.nextToken());
-        c = Integer.parseInt(st.nextToken());
+        int N = stoi(st.nextToken());
+        int d = stoi(st.nextToken());
+        int k = stoi(st.nextToken());
+        int c = stoi(st.nextToken());
+        int[] A = new int[N];
+        int[] check = new int[d+1];
 
-        arr = new int[N];
         for(int i=0; i<N; i++){
-            arr[i] = Integer.parseInt(br.readLine());
+            A[i] = stoi(br.readLine());
         }
 
-        visited = new int[d+1];
+        int res = 1;
+        check[c]++;
 
-        System.out.println(slide());
-    }
-    private static int slide(){
-        int inSlide=0, chance;
         for(int i=0; i<k; i++){
-            if(visited[arr[i]]==0){
-                inSlide++;
+            if(check[A[i]] == 0){
+                res++;
             }
-            visited[arr[i]]++;
+            check[A[i]]++;
+
         }
 
-        chance=inSlide;
+        int cnt = res;
+
         for(int i=1; i<N; i++){
-            if(chance<=inSlide){
-                if(visited[c]==0){
-                    chance = inSlide+1;
-                }
-                else{
-                    chance = inSlide;
-                }
-            }
-            visited[arr[i-1]]--;
-            if(visited[arr[i-1]]==0){
-                inSlide--;
+            int pop = A[i-1];
+            check[pop]--;
+            if(check[pop] == 0){
+                cnt--;
             }
 
-            if(visited[arr[(i+k-1) % N]] ==0){
-                inSlide++;
+            int add = A[(i+k-1) % N];
+            if(check[add] == 0){
+                cnt++;
             }
-            visited[arr[(i+k-1) % N]]++;
+            check[add]++;
+
+            res = Math.max(res, cnt);
         }
-        return chance;
 
+        System.out.println(res);
     }
+
+
 }
