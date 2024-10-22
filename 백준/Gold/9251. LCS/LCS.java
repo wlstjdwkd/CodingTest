@@ -1,33 +1,60 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 public class Main {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static char[] str1;
-    static char[] str2;
-    static Integer[][] dp;
-    static int max =Integer.MIN_VALUE;
-    public static void main(String[] args) throws IOException {
+    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private static StringTokenizer st;
+    private static StringBuilder sb = new StringBuilder();
+
+
+    private static int stoi(String s){
+        return Integer.parseInt(s);
+    }
+
+//    private static boolean isArea(int x, int y){
+//        return 0<=x && x<r && 0<=y && y<c;
+//    }
+
+    private static char[] str1;
+    private static char[] str2;
+
+    private static Integer[][] dp;
+
+    public static void main(String[] args) throws IOException{
+
         str1 = br.readLine().toCharArray();
         str2 = br.readLine().toCharArray();
 
         dp = new Integer[str1.length][str2.length];
 
-        System.out.println(lcs(str1.length-1,str2.length-1));
+        System.out.println(LCS(str1.length-1, str2.length-1));
     }
-    private static int lcs(int a, int b){
-        if(a<0||b<0){
+
+    private static int LCS(int x, int y){
+        if(x== -1 || y == -1){
             return 0;
         }
-        if(dp[a][b]==null) {
-            dp[a][b]=0;
-            if(str1[a] == str2[b])
-                dp[a][b] = lcs(a-1, b-1)+1;
-            else
-                dp[a][b] = Math.max(lcs(a-1,b), lcs(a,b-1));
+
+        if(dp[x][y] == null){
+            dp[x][y] = 0;
+
+            if(str1[x] == str2[y]){
+                dp[x][y] = LCS(x-1,y-1) + 1;
+            }
+
+            else{
+                dp[x][y] = Math.max(LCS(x-1,y), LCS(x,y-1));
+            }
         }
 
-        return dp[a][b];
+        return dp[x][y];
     }
+
+
+
 }
