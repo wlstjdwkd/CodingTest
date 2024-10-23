@@ -1,63 +1,85 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 public class Main {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static StringTokenizer st;
-    static StringBuilder sb = new StringBuilder();
-    static int L,C;
-    static String[] input;
-    static boolean[] visit;
-    static String[] arr;
-    public static void main(String[] args) throws IOException {
-        st = new StringTokenizer(br.readLine());
-        L = Integer.parseInt(st.nextToken());
-        C = Integer.parseInt(st.nextToken());
+    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private static StringTokenizer st;
+    private static StringBuilder sb = new StringBuilder();
 
-        st= new StringTokenizer(br.readLine());
-        input = new String[C];
-        visit = new boolean[C];
-        for(int i=0; i<C; i++){
-            input[i] = st.nextToken();
-        }
-        Arrays.sort(input);
-        arr= new String[L];
-        combi(0,0);
-        System.out.println(sb);
+
+    private static int stoi(String s){
+        return Integer.parseInt(s);
     }
-    private static void combi(int start, int depth){
-        if(depth == L){
-            int cnt=0;
-            int cnt2=0;
-            StringBuilder sb2 = new StringBuilder();
-            for(String val : arr){
-                if(val.equals("a")||val.equals("e")||val.equals("i")||val.equals("o")||val.equals("u")){
-                    sb2.append(val);
-                    cnt=1;
-                }
-                else{
-                    sb2.append(val);
-                    cnt2++;
-                }
-            }
-            if(cnt==1&& cnt2>=2){
-                sb.append(sb2.toString());
-                sb.append("\n");
 
+    private static final int[] dx = {-1,0,1,0};
+    private static final int[] dy = {0,1,0,-1};
+
+//    private static boolean isArea(int x, int y){
+//        return 1<=x && x<=m && 1<=y && y<=n;
+//    }
+
+    private static int L,C;
+    private static char[] list;
+    private static char[] code;
+
+    public static void main(String[] args) throws IOException{
+        st = new StringTokenizer(br.readLine());
+
+        L = stoi(st.nextToken());
+        C = stoi(st.nextToken());
+
+        list = new char[C];
+        code = new char[L];
+
+        st = new StringTokenizer(br.readLine());
+
+        for(int i=0; i<C; i++){
+            list[i] = st.nextToken().charAt(0);
+        }
+
+        Arrays.sort(list);
+
+        makeCode(0,0);
+    }
+
+    private static void makeCode(int x, int idx){
+        if(idx == L){
+            if(isValid()){
+                System.out.println(code);
             }
             return;
         }
-        for(int i=start; i<C; i++){
-            if(!visit[i]){
-                visit[i] = true;
-                arr[depth] = input[i];
-                combi(i, depth+1);
-                visit[i] = false;
-            }
+
+        for(int i=x; i<C; i++){
+            code[idx] = list[i];
+            makeCode(i+1, idx+1);
         }
     }
+
+    private static boolean isValid(){
+        int mo = 0;
+        int ja = 0;
+        for(final char x : code){
+            if(x == 'a' || x == 'e' || x == 'i' || x == 'o' || x == 'u'){
+                mo++;
+            }
+            else{
+                ja++;
+            }
+        }
+
+        if(mo >= 1 && ja >= 2){
+            return true;
+        }
+
+        return false;
+    }
+
+
+
 }
