@@ -1,69 +1,79 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class Main {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-//    static StringTokenizer st;
-//    static int N,M, size[], cost[];
-//    public static void main(String[] args) throws IOException {
-//        st = new StringTokenizer(br.readLine());
-//        N = Integer.parseInt(st.nextToken());
-//        M = Integer.parseInt(st.nextToken());
-//        size = new int[N];
-//        cost = new int[N];
-//        st = new StringTokenizer(br.readLine());
-//        for(int i=0; i<N; i++){
-//            size[i] = Integer.parseInt(st.nextToken());
-//        }
-//        st = new StringTokenizer(br.readLine());
-//        for(int i=0; i<N; i++){
-//            cost[i] = Integer.parseInt(st.nextToken());
-//        }
-//
-//
-//
+    private static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private static StringTokenizer st;
+    private static StringBuilder sb = new StringBuilder();
+
+
+    private static int stoi(String s){
+        return Integer.parseInt(s);
+    }
+
+
+
+//    private static boolean isArea(int x, int y){
+//        return 1<=x && x<=N && 1<=y && y<=N;
 //    }
-public static void main(String[] args) throws IOException {
-    StringTokenizer st = new StringTokenizer(br.readLine());
-    int n = Integer.parseInt(st.nextToken());
-    int m = Integer.parseInt(st.nextToken());
-    int ans = Integer.MAX_VALUE;
-
-    int[] memoryArr = new int[n];
-    int[] costArr = new int[n];
-    int[][] dp = new int[n][100001];
-
-    StringTokenizer st1 = new StringTokenizer(br.readLine());
-    StringTokenizer st2 = new StringTokenizer(br.readLine());
-
-    // 비용과 메모리 초기화부분
-    for(int i = 0 ; i < n; i++){
-        memoryArr[i] = Integer.parseInt(st1.nextToken());
-        costArr[i] = Integer.parseInt(st2.nextToken());
-    }
 
 
-    for(int i = 0 ; i < n; i++){
-        int cost = costArr[i];
-        int memory = memoryArr[i];
+    public static void main(String[] args) throws IOException{
 
+        st = new StringTokenizer(br.readLine());
 
-        for(int j = 0; j <= 10000; j++){
-            // 앱이 하나일 경우 예외처리
-            if(i == 0) {
-                if (j >= cost) dp[i][j] = memory;
-            }
-            else {
-                if (j >= cost) dp[i][j] = Math.max(dp[i - 1][j - cost] + memory, dp[i - 1][j]);
-                else dp[i][j] = dp[i - 1][j];
-            }
+        int n = stoi(st.nextToken());
+        int m = stoi(st.nextToken());
+        int ans = Integer.MAX_VALUE;
 
-            // 문제에서 주어진 필요한 메모리보다 확보가능한 메모리가 클 경우 정답으로 저장
-            if(dp[i][j] >= m) ans = Math.min(ans, j);
+        int[] memoryArr = new int[n];
+        int[] costArr = new int[n];
+        int[][] dp = new int[n][10001];
+
+        st = new StringTokenizer(br.readLine());
+        StringTokenizer st2 = new StringTokenizer(br.readLine());
+        for(int i=0; i<n; i++){
+            memoryArr[i] = stoi(st.nextToken());
+            costArr[i] = stoi(st2.nextToken());
         }
+
+        for(int i=0; i<n; i++){
+            int cost = costArr[i];
+            int memory = memoryArr[i];
+
+            for(int j=0; j<=10000; j++){
+                if(i==0){
+                    if(j>=cost){
+                        dp[i][j] = memory;
+                    }
+                }
+                else{
+                    if(j>=cost){
+                        dp[i][j] = Math.max(dp[i-1][j-cost] + memory, dp[i-1][j]);
+                    }
+                    else{
+                        dp[i][j] = dp[i-1][j];
+                    }
+
+                    
+                }
+
+                if(dp[i][j]>=m){
+                    ans = Math.min(ans, j);
+                }
+            }
+        }
+
+        System.out.println(ans);
     }
-    System.out.println(ans);
-}
+
+
 }
