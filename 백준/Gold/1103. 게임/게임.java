@@ -1,76 +1,90 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class Main {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static StringTokenizer st;
-    static int N,M,result, arr[][], dp[][];
-    static boolean visited[][];
-    static boolean flag;
-    static int[] dx = {-1,1,0,0};
-    static int[] dy = {0,0,-1,1};
-    public static void main(String[] args) throws IOException {
-        st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
+    private static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private static StringTokenizer st;
+    private static StringBuilder sb = new StringBuilder();
 
-        arr = new int[N][M];
-        dp = new int[N][M];
-        visited = new boolean[N][M];
-        for(int i=0; i<N; i++){
-            String s = br.readLine();
-            for(int j=0; j<M; j++){
-                if(s.charAt(j) == 'H'){
-                    arr[i][j] = 10;
-                }
-                else{
-                    arr[i][j] = s.charAt(j) - 48;
-                }
-            }
+
+    private static int stoi(String s){
+        return Integer.parseInt(s);
+    }
+
+    private static final int[] dx = {0,1,0,-1};
+    private static final int[] dy = {-1,0,1,0};
+
+    private static boolean isArea(int x, int y){
+        return 0<=x && x<m && 0<=y && y<n;
+    }
+
+    private static int n,m,max;
+    private static boolean isCycle = false;
+    private static int[][] dp;
+    private static char[][] map;
+    private static boolean[][] visited;
+
+
+    public static void main(String[] args) throws IOException{
+
+        st = new StringTokenizer(br.readLine());
+
+        n = stoi(st.nextToken());
+        m = stoi(st.nextToken());
+        dp = new int[n][m];
+        map = new char[n][m];
+        visited = new boolean[n][m];
+
+        for(int i=0; i<n; i++){
+            String line = br.readLine();
+            map[i] = line.toCharArray();
         }
 
         visited[0][0] = true;
-        flag=false;
         dfs(0,0,1);
-
-        if(flag==true){
+        if(isCycle){
             System.out.println(-1);
         }
         else{
-            System.out.println(result);
+            System.out.println(max);
         }
-
     }
-    private static void dfs(int x, int y, int cnt){
-        if(cnt>result){
-            result = cnt;
-        }
-        dp[y][x] = cnt;
-        for(int i=0; i<4; i++){
-            int num = arr[y][x];
-            int xx = x+ num*dx[i];
-            int yy = y + num * dy[i];
 
-            if(isInArea(xx,yy)){
-                if(arr[yy][xx] == 10){
-                    continue;
-                }
-                if(visited[yy][xx]){
-                    flag = true;
-                    return;
-                }
-                if(dp[yy][xx]<=cnt){
-                    visited[yy][xx] = true;
-                    dfs(xx,yy,cnt+1);
-                    visited[yy][xx] = false;
+    private static void dfs(int x, int y, int moveCnt){
+        int moveSquareCnt = map[y][x] - '0';
+        dp[y][x] = moveCnt;
+        if(moveCnt > max){
+
+            max = moveCnt;
+        }
+
+        for(int i=0; i<4; i++){
+            int nx = x + moveSquareCnt * dx[i];
+            int ny = y + moveSquareCnt * dy[i];
+
+            if(isArea(nx, ny)){
+                if(map[ny][nx] != 'H'){
+                    if(moveCnt >= dp[ny][nx]){
+                        if(visited[ny][nx]){
+                            isCycle = true;
+                            return;
+                        }
+                        visited[ny][nx] = true;
+                        dfs(nx, ny, moveCnt + 1);
+                        visited[ny][nx] = false;
+                    }
                 }
             }
         }
     }
 
-    private static boolean isInArea(int x, int y){
-        return 0<=x && x<M && 0<=y && y<N;
-    }
+
 }
