@@ -1,94 +1,120 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.awt.Point;
+import java.io.*;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+import java.util.Stack;
 import java.util.StringTokenizer;
 
 public class Main {
-    private static int N;
-    private static int[][] arr;
-    private static int result = Integer.MAX_VALUE;
-    private static int[] min_nutrution = new int[4];
-    private static int[] isSelected;
-    private static ArrayList<String> list = new ArrayList<>();
+    private static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private static StringTokenizer st;
+    private static StringBuilder sb = new StringBuilder();
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st;
-        N = Integer.parseInt(br.readLine());
 
-        arr = new int[N+1][5];
+    private static int stoi(String s){
+        return Integer.parseInt(s);
+    }
+
+    private static final int[] dx = {0,1,0,-1};
+    private static final int[] dy = {-1,0,1,0};
+
+//    private static boolean isArea(int x, int y){
+//        return 0<=x && x<5 && 0<=y && y<5;
+//    }
+
+    private static int N, M = 5, ans = Integer.MAX_VALUE;
+    private static int[][] nutrients;
+    private static int[] minN;
+    private static int[] select;
+
+    private static List<String> list = new ArrayList<>();
+
+    public static void main(String[] args) throws IOException{
+
+        N = stoi(br.readLine());
+
+        nutrients = new int[N][M];
+        minN = new int[4];
 
         st = new StringTokenizer(br.readLine());
-
         for(int i=0; i<4; i++){
-            min_nutrution[i] = Integer.parseInt(st.nextToken());
+            minN[i] = stoi(st.nextToken());
         }
 
-        for(int i=1; i<=N; i++){
+        for(int i=0; i<N; i++){
             st = new StringTokenizer(br.readLine());
-
-            for(int j=0; j<5; j++){
-                arr[i][j] = Integer.parseInt(st.nextToken());
+            for(int j=0; j<M; j++){
+                nutrients[i][j] = stoi(st.nextToken());
             }
         }
 
         for(int i=1; i<=N; i++){
-            isSelected = new int[N];
-            dfs(0,i,1);
+            select = new int[N];
+            choice(0,i,0);
         }
 
-        if(result == Integer.MAX_VALUE) System.out.println(-1);
-        else{
+        if(list.size()>0){
+            System.out.println(ans);
             Collections.sort(list);
-            System.out.println(result);
-            System.out.println(list.get(0));
-
+            String str1 = list.get(0);
+            for(int i=0; i<str1.length(); i++){
+                System.out.print(str1.charAt(i));
+            }
+        }
+        else{
+            System.out.println(-1);
         }
     }
 
-    static void dfs(int cnt, int choiceNum, int start){
-        if(cnt == choiceNum){
-            isCheck(choiceNum);
+    private static void choice(int cnt, int sel, int start){
+        if(cnt == sel){
+            isCheck(sel);
             return;
         }
-        for(int i=start; i<=N; i++){
-            isSelected[cnt] = i;
-            dfs(cnt+1, choiceNum, i+1);
-            isSelected[cnt] = 0;
+
+        for(int i=start; i<N; i++){
+            select[cnt] = i;
+            choice(cnt+1, sel, i+1);
         }
     }
 
-    private static void isCheck(int choiceNum){
-        int sum_nutrition[] = new int[4];
+    private static boolean isCheck(int sel){
         int price = 0;
-
-        for(int i=0; i<choiceNum; i++){
-            for(int j=0; j<4; j++){
-                sum_nutrition[j] += arr[isSelected[i]][j];
-            }
-            price += arr[isSelected[i]][4];
+        int[] sum = new int[4];
+        for(int i=0; i<sel; i++){
+            sum[0] += nutrients[select[i]][0];
+            sum[1] += nutrients[select[i]][1];
+            sum[2] += nutrients[select[i]][2];
+            sum[3] += nutrients[select[i]][3];
+            price += nutrients[select[i]][4];
         }
 
         for(int i=0; i<4; i++){
-            if(min_nutrution[i] > sum_nutrition[i])return;
+            if(minN[i] > sum[i]){
+                return false;
+            }
         }
-            if(result >= price){
-                if(result > price){
-                    list.clear();
-                }
 
-                StringBuilder sb = new StringBuilder();
-
-                for(int j=0; j<choiceNum; j++){
-                    sb.append(isSelected[j]).append(" ");
-
-                }
-
-                list.add(sb.toString());
-                result = price;
+        if(ans>=price){
+            if(ans>price){
+                list.clear();
             }
 
+            String str = "";
+            for(int i=0; i<sel; i++){
+                str+=(select[i] + 1 + " ");
+            }
+            list.add(str);
+            ans = price;
+        }
+
+        return true;
     }
+
 }
