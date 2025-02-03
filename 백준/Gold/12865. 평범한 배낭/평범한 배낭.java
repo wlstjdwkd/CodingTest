@@ -19,8 +19,8 @@ public class Main {
             W = Integer.parseInt(st.nextToken());
             V = Integer.parseInt(st.nextToken());
 
-            map[i][0]= W;
-            map[i][1]=V;
+            map[i][0] = W;
+            map[i][1] = V;
         }
 
         for(int i=1; i<=N; i++){
